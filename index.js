@@ -230,9 +230,10 @@ var ghostSpeed = Math.sqrt(2*(speed-2)*(speed-2)) / 1.5;
 var bulletSpeed = speed + 20
 var ghostList = []
 var bulletList = []
+var particles = []
 
 
-var movables = [background, ...boundaries, foreground, ...ghostList]
+var movables = [background, ...boundaries, foreground, ...ghostList, ...particles]
 
 function rectangularCollision({rectangle1, rectangle2}) {
     return(
@@ -391,7 +392,7 @@ function createNewGhost() {
 
     ghostList.push(newGhost);
 
-    movables = [background, ...boundaries, foreground, ...ghostList]
+    movables = [background, ...boundaries, foreground, ...ghostList, ...particles]
 }
 
 var cursor = { x: 0, y: 0 };
@@ -418,7 +419,7 @@ function spawnBullet() {
     bulletList[bulletList.length - 1].cursorX = cursor.x
     bulletList[bulletList.length - 1].cursorY = cursor.y
 
-    movables = [background, ...boundaries, foreground, ...ghostList]
+    movables = [background, ...boundaries, foreground, ...ghostList, ...particles]
 }
 
 function checkBulletCollision(bulletSpeed, bullet, ghost) {
@@ -458,6 +459,11 @@ function startGame(){
 }
 function resetPlayerPos() {
     boundaries = []
+    particles = []
+    particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+    });
     movables.forEach(element => {
         element.position.x = offset.x
         element.position.y = offset.y
@@ -476,7 +482,7 @@ function resetPlayerPos() {
             }
         })
     })
-    movables = [background, ...boundaries, foreground, ...ghostList]
+    movables = [background, ...boundaries, foreground, ...ghostList, ...particles]
 }
 function resetGame(popupId){
     unPause();
@@ -667,7 +673,11 @@ function startingHUD(popupId, runAmount){
     }
     userCurrentState = inMenu
     changeGameState(paused)
-    document.getElementById('canvas').style.display = 'none'
+    document.getElementById('canvas').style.opacity = 1
+    document.getElementById('canvas').style.transform = 'scale(0)';
+    window.setTimeout(function(){
+        document.getElementById('canvas').style.display = 'none';
+    },700);
     counterStart=0;
     backgroundMusicPlay('new')
     document.getElementById('pleaseClick').style.display = 'none'
@@ -747,9 +757,37 @@ function resumeGame(){
     setTimeout(unPause, 500)
 }
 
+function ghostDied(ghost) {
+    if(ghost.diedViaPlayer && playerHealthCurrent > 0){
+        playerHitSFX.overPlay()
+        playerHealthCurrent -= 1
+        playerHealth = new Text ({
+            position: {
+                x: (canvas.width)/100  ,
+                y: (canvas.height)/20
+            },
+            input: "Player Health: " + playerHealthCurrent + "/" + playerHealthMax,
+            font: "48px VT323",
+            color: "black",
+            alignment: "left"
+        })
+    }
+    ghostList.splice(ghost.indexInList, 1)
+    ghost.particles()
+    ghostList.forEach(ghost1 => {
+        if(ghost1.indexInList >= ghost.indexInList){ghost1.indexInList -= 1}
+    })
+}
+
 function tick() {
     if(gameState == paused){return}
-    if(document.getElementById('canvas').style.display == 'none') {document.getElementById('canvas').style.display = 'block'}
+    if(document.getElementById('canvas').style.display == 'none') {
+        document.getElementById('canvas').style.display = 'block'
+        window.setTimeout(() => {
+            document.getElementById('canvas').style.opacity = 1
+            document.getElementById('canvas').style.transform = 'scale(1)'
+        }, 0);
+    }
     backgroundMusicPlay()
     window.requestAnimationFrame(tick);
     background.draw()
@@ -888,29 +926,20 @@ function tick() {
         if(movingD)movables.forEach((movable) => {movable.position.x -= playerSpeed})
     }
 
+    particles.forEach((particle, index) => {
+        particle.update();
+        particle.draw();
+    
+        if (particle.isDead()) {
+            particles.splice(index, 1);
+        }
+    });
+
     //south: 0, southEast: 28, east: 24, northEast: 20, north: 16, northWest: 12, west: 8, southWest: 4
     ghostList.forEach(ghost => {
         if(ghost.isDead){
-            if(ghost.diedViaPlayer && playerHealthCurrent > 0){
-                playerHitSFX.overPlay()
-                playerHealthCurrent -= 1
-                playerHealth = new Text ({
-                    position: {
-                        x: (canvas.width)/100  ,
-                        y: (canvas.height)/20
-                    },
-                    input: "Player Health: " + playerHealthCurrent + "/" + playerHealthMax,
-                    font: "48px VT323",
-                    color: "black",
-                    alignment: "left"
-                })
-            }
-            ghostList.splice(ghost.indexInList, 1)
-            ghostList.forEach(ghost1 => {
-                if(ghost1.indexInList >= ghost.indexInList){ghost1.indexInList -= 1}
-            })
+            ghostDied(ghost)
         }
-
 
         if(Math.floor(ghost.position.x / 5) == Math.floor(player.position.x / 5) && player.position.y < ghost.position.y) {
             //console.log('north')
