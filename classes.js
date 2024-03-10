@@ -103,6 +103,28 @@ class Enemy {
             this.diedViaPlayer = true
         }
     }
+    particles() {
+        for (var i = 0; i < 20; i++) {
+            var particle
+            if(this.diedViaPlayer){
+                particle = new Particle(
+                    { x: this.position.x, y: this.position.y },
+                    { x: (Math.random() - 0.5) * 3, y: (Math.random() - 0.5) * 3 },
+                    "rgba(255, 0, 0, 0.8)",
+                    Math.random() * 3
+                );
+            } else {
+                particle = new Particle(
+                    { x: this.position.x, y: this.position.y },
+                    { x: (Math.random() - 0.5) * 3, y: (Math.random() - 0.5) * 3 },
+                    "rgba(207, 174, 207, 0.8)",
+                    Math.random() * 3
+                );
+            }
+            particles.push(particle);
+            movables = [background, ...boundaries, foreground, ...ghostList, ...particles]
+        }
+    }
 }
 
 class Weapon {
@@ -232,6 +254,39 @@ class Sound {
         this.sound.currentTime = 0
         this.sound.play()
         this.isPlaying = true
+    }
+}
+class Particle {
+    constructor(position, velocity, color, size) {
+        this.position = position;
+        this.velocity = velocity;
+        this.color = color;
+        this.size = size;
+        this.alpha = 1; // Initial alpha value for fading effect
+    }
+
+    draw() {
+        c.save(); // Save the current drawing state
+        c.globalAlpha = this.alpha; // Set the alpha value for transparency
+        c.fillStyle = this.color;
+        c.beginPath();
+        c.arc(this.position.x, this.position.y, this.size, 0, Math.PI * 2);
+        c.fill();
+        c.restore(); // Restore the previous drawing state
+    }
+
+    update() {
+        // Update particle position based on velocity
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
+
+        // Decrease alpha value to simulate fading effect
+        this.alpha -= 0.01;
+    }
+
+    // Method to check if particle should be removed from the list
+    isDead() {
+        return this.alpha <= 0;
     }
 }
 
