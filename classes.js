@@ -1,11 +1,12 @@
 class Sprite {
-    constructor({ position, image, frames = {max: 1} }) {
+    constructor({ position, image, frames = {max: 1}, scaleFactor = 1 }) {
         this.position = position;
         this.image = image;
         this.frames = {...frames, val: 0, elapsed: 0};
         this.moving = false
         this.movingDirection = 0
         this.movedCheck = 0
+        this.scaleFactor = scaleFactor
 
         this.image.onload = () => {
             this.width = this.image.width / this.frames.max
@@ -19,11 +20,11 @@ class Sprite {
             this.frames.val * (this.width),
             0,
             this.image.width / this.frames.max,
-            this.image.height / 1,
+            this.image.height,
             this.position.x,
             this.position.y,
-            this.image.width / this.frames.max,
-            this.image.height / 1
+            this.image.width / this.frames.max * this.scaleFactor,
+            this.image.height * this.scaleFactor
         )
 
         if(!this.moving){ return }
@@ -49,7 +50,7 @@ class Enemy {
     constructor({ position, image, frames = {max: 1}, indexInList}) {
         this.position = position;
         this.image = image;
-        this.frames = {...frames, val: 0, elapsed: 0};
+        this.frames = {...frames, val: 28, elapsed: 0};
         this.movingDirection = 0
         this.movedCheck = 0
         this.width = this.image.width / this.frames.max
@@ -57,9 +58,14 @@ class Enemy {
         this.indexInList = indexInList
         this.isDead = false
         this.diedViaPlayer = false
+        this.isSpawning = true
+        this.spawnPeriod = 0
     }
 
     draw() {
+        c.globalAlpha = this.spawnPeriod / 150
+
+
         c.drawImage(
             this.image,
             this.frames.val * (this.width),
@@ -72,22 +78,33 @@ class Enemy {
             this.image.height / 1
         )
 
-        this.frames.elapsed++
+        c.globalAlpha = 1
 
-        if(this.movedCheck != this.movingDirection) {
+        if(this.spawnPeriod == 150) {
+            this.isSpawning = false
+        }
+        if(this.spawnPeriod == 130) {
+            for (var i = 0; i < 20; i++) {
+                var particle
+                particle = new Particle(
+                    { x: this.position.x + (this.width / 2), y: this.position.y + (this.height / 2) },
+                    { x: (Math.random() - 0.5) * 3, y: (Math.random() - 0.5) * 3 },
+                    "rgba(207, 174, 207, 0.8)",
+                    Math.random() * 3
+                );
+                particles.push(particle);
+                movables = [background, ...boundaries, ...ghostList, ...particles]
+            }
+        }
+        this.spawnPeriod++
+
+        if(this.movedCheck != this.movingDirection && this.isSpawning == false) {
             this.frames.val = this.movingDirection
             this.movedCheck = this.movingDirection
         }
-
-        if(this.frames.elapsed % 25 == 0){
-            if(this.frames.val < this.movingDirection + 3) {
-                this.frames.val++
-            } else {
-                this.frames.val = this.movingDirection;
-            }
-        }
     }
     goto(targetX, targetY, speed) {
+        if(this.isSpawning){return}
         var dx = targetX - this.position.x;
         var dy = targetY - this.position.y;
         var distance = Math.sqrt(dx * dx + dy * dy);
@@ -98,7 +115,7 @@ class Enemy {
         this.position.x += velocityX;
         this.position.y += velocityY;
         
-        if (Math.floor(Math.abs(dx) / 50) <= Math.floor(Math.abs(velocityX) / 50) && Math.floor(Math.abs(dy) / 50) <= Math.floor(Math.abs(velocityY) / 50)) {
+        if (Math.floor(Math.abs(dx) / 50) <= Math.floor(Math.abs(velocityX) / 50) && Math.floor(Math.abs(dy) / 50) <= Math.floor(Math.abs(velocityY) / 50) && this.isSpawning == false) {
             this.isDead = true
             this.diedViaPlayer = true
         }
@@ -122,7 +139,7 @@ class Enemy {
                 );
             }
             particles.push(particle);
-            movables = [background, ...boundaries, foreground, ...ghostList, ...particles]
+            movables = [background, ...boundaries, ...ghostList, ...particles]
         }
     }
 }
@@ -300,7 +317,7 @@ class Boundary {
     }
 
     draw() {
-        c.fillStyle = 'rgba(255, 0, 0, 0.2)';
+        c.fillStyle = 'rgba(255, 0, 0, 0)';
         c.fillRect(this.position.x, this.position.y, this.width, this.height);
     }
 }

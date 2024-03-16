@@ -105,6 +105,7 @@ canvas:hover {
     margin-bottom: 5px;
     font-family: VT323;
     transition-duration: 150ms;
+    text-shadow: 3px 3px rgb(255, 175, 255);
 }
 .buttonStart:hover {
     background-color: #2cb6ac;

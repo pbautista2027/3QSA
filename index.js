@@ -25,19 +25,19 @@ canvas.height = 768;
 canvas.addEventListener("contextmenu", (e) => {e.preventDefault()});
 
 const collisionsMap = []
-for (var i = 0; i < collisions.length; i += 69) {
-    collisionsMap.push(collisions.slice(i, i + 69))
+for (var i = 0; i < collisions.length; i += 100) {
+    collisionsMap.push(collisions.slice(i, i + 100))
 }
 
 const offset = {
-    x: -1600,
-    y: -1900
+    x: -3266,
+    y: -700
 }
 var boundaries = []
 
 collisionsMap.forEach((row, i) => {
     row.forEach((symbol, j) => {
-        if (symbol == 145) {
+        if (symbol == 1610612777) {
             boundaries.push(
                 new Boundary({
                     position: {
@@ -122,6 +122,9 @@ function buttonClickSFXFunc() {
 const image = new Image();
 image.src = './assets/map.png';
 
+const mapBackgroundImage = new Image();
+mapBackgroundImage.src = './assets/mapBG.png'
+
 const playerImage = new Image();
 playerImage.src = './assets/charachter.png';
 
@@ -133,9 +136,6 @@ bulletImage.src = './assets/bullet.png'
 
 const zombieImage = new Image();
 zombieImage.src = './assets/zombie.png';
-
-const foreGroundImage = new Image();
-foreGroundImage.src = './assets/foreground.png';
 
 const player = new Sprite ({
     position: {
@@ -166,7 +166,7 @@ var playerHealth = new Text ({
     },
     input: "Player Health: " + playerHealthCurrent + "/" + playerHealthMax,
     font: "48px VT323",
-    color: "black",
+    color: "#777",
     alignment: "left"
 })
 var waveNumber = new Text ({
@@ -176,7 +176,7 @@ var waveNumber = new Text ({
     },
     input: " ",
     font: "48px VT323",
-    color: "black",
+    color: "#777",
     alignment: "left"
 })
 var magCapacity = new Text ({
@@ -186,7 +186,7 @@ var magCapacity = new Text ({
     },
     input: "Magazine: " + currentAmmo + "/" + totalAmmo,
     font: "48px VT323",
-    color: "black",
+    color: "#777",
     alignment: "left"
 })
 
@@ -200,15 +200,19 @@ const background = new Sprite(
     }
 )
 
-const foreground = new Sprite(
+const mapBackground = new Sprite(
     {
         position: {
             x: offset.x,
             y: offset.y
         },
-        image: foreGroundImage
+        image: mapBackgroundImage,
+        frames: {
+            max: 1
+        },
+        scaleFactor: 5
     }
-) 
+)
 
 const keys = {
     w: {
@@ -232,20 +236,19 @@ var blockInput = false
 var speed = 4;
 var playerSpeed = speed;
 var ghostSpeed = Math.sqrt(2*(speed-2)*(speed-2)) / 1.5;
-var bulletSpeed = speed + 20
+var bulletSpeed = speed + 10
 var ghostList = []
 var bulletList = []
 var particles = []
 
-
-var movables = [background, ...boundaries, foreground, ...ghostList, ...particles]
+var movables = [background, ...boundaries, ...ghostList, ...particles]
 
 function rectangularCollision({rectangle1, rectangle2}) {
     return(
-        rectangle1.position.x + rectangle1.width >= rectangle2.position.x &&
+        rectangle1.position.x + (rectangle1.width * 0.9) >= rectangle2.position.x &&
         rectangle1.position.x <= rectangle2.position.x + rectangle2.width &&
         rectangle1.position.y <= rectangle2.position.y + rectangle2.height &&
-        rectangle1.position.y + rectangle1.height >= rectangle2.position.y
+        rectangle1.position.y + (rectangle1.height * 0.9) >= rectangle2.position.y
     )
 }
 
@@ -297,7 +300,7 @@ function shootBullet(){
                 },
                 input: "Magazine: " + currentAmmo + "/" + totalAmmo,
                 font: "48px VT323",
-                color: "black",
+                color: "#777",
                 alignment: "left"
             })
         }
@@ -311,7 +314,7 @@ function shootBullet(){
             },
             input: "Magazine: " + currentAmmo,
             font: "48px VT323",
-            color: "black",
+            color: "#777",
             alignment: "left"
         })
         setTimeout(reload,reloadSpeed);
@@ -325,7 +328,7 @@ var reach100 = new Text ({
     },
     input: " ",
     font: "57px VT323",
-    color: "black",
+    color: "#777",
     alignment: "left"
 })
 var displayRandomUpgrade = new Text ({
@@ -335,7 +338,7 @@ var displayRandomUpgrade = new Text ({
     },
     input: " ",
     font: "57px VT323",
-    color: "black",
+    color: "#777",
     alignment: "left"
 })
 
@@ -420,7 +423,7 @@ function reload(){
         },
         input: "Magazine: " + currentAmmo + "/" + totalAmmo,
         font: "48px VT323",
-        color: "black",
+        color: "#777",
         alignment: "left"
     })
 }
@@ -438,7 +441,7 @@ function fastReload(){
                 },
                 input: "Magazine: " + currentAmmo,
                 font: "48px VT323",
-                color: "black",
+                color: "#777",
                 alignment: "left"
             })
             setTimeout(reload,reloadSpeed+(altCurrentAmmo*40));
@@ -453,7 +456,7 @@ var displayKill = new Text ({
     },
     input: "Kills: " + killCounter,
     font: "48px VT323",
-    color: "black",
+    color: "#777",
     alignment: "left"
 })
 
@@ -481,7 +484,7 @@ function createNewGhost() {
 
     ghostList.push(newGhost);
 
-    movables = [background, ...boundaries, foreground, ...ghostList, ...particles]
+    movables = [background, ...boundaries, ...ghostList, ...particles]
 }
 
 var cursor = { x: 0, y: 0 };
@@ -508,10 +511,11 @@ function spawnBullet() {
     bulletList[bulletList.length - 1].cursorX = cursor.x
     bulletList[bulletList.length - 1].cursorY = cursor.y
 
-    movables = [background, ...boundaries, foreground, ...ghostList, ...particles]
+    movables = [background, ...boundaries, ...ghostList, ...particles]
 }
 
 function checkBulletCollision(bulletSpeed, bullet, ghost) {
+    if(ghost.isSpawning){ return }
     var dx = ghost.position.x - bullet.position.x;
     var dy = ghost.position.y - bullet.position.y;
     var distance = Math.sqrt(dx * dx + dy * dy);
@@ -524,7 +528,6 @@ function checkBulletCollision(bulletSpeed, bullet, ghost) {
         ghost.isDead = true
         killCounter++;
         ghostDeathSFX.sound.volume = 0.7
-        ghostDeathSFX.sound.pi
         ghostDeathSFX.overPlay()
     }
 }
@@ -562,7 +565,7 @@ function resetPlayerPos() {
     });
     collisionsMap.forEach((row, i) => {
         row.forEach((symbol, j) => {
-            if (symbol == 145) {
+            if (symbol == 1610612777) {
                 boundaries.push(
                     new Boundary({
                         position: {
@@ -574,7 +577,9 @@ function resetPlayerPos() {
             }
         })
     })
-    movables = [background, ...boundaries, foreground, ...ghostList, ...particles]
+    movables = [background, ...boundaries, ...ghostList, ...particles]
+    player.frames.val = 0
+    player.movedCheck = this.movingDirection
 }
 function resetGame(popupId){
     unPause();
@@ -624,7 +629,7 @@ function waveNumberDisplay(){
                 },
                 input: "WAVE " + waveGhost,
                 font: "57px VT323",
-                color: "black",
+                color: "#777",
                 alignment: "left"
             })
         }
@@ -636,7 +641,7 @@ function waveNumberDisplay(){
                 },
                 input: "FINAL WAVE",
                 font: "57px VT323",
-                color: "black",
+                color: "#777",
                 alignment: "left"
             })
         }
@@ -649,7 +654,7 @@ function stopWaveNumberDisplay(){
             },
             input: " ",
             font: "57px VT323",
-            color: "black",
+            color: "#777",
             alignment: "left"
         })
     }
@@ -662,7 +667,7 @@ function stopWaveNumberDisplay(){
                 },
                 input: "100 KILLS ACQUIRED, WEAPON UPGRADED",
                 font: "57px VT323",
-                color: "black",
+                color: "#777",
                 alignment: "left"
             })
         }
@@ -675,7 +680,7 @@ function stopWaveNumberDisplay(){
             },
             input: "",
             font: "57px VT323",
-            color: "black",
+            color: "#777",
             alignment: "left"
         })
     }
@@ -730,7 +735,7 @@ function informationChecker(){
         },
         input: "Player Health: " + playerHealthCurrent + "/" + playerHealthMax,
         font: "48px VT323",
-        color: "black",
+        color: "#777",
         alignment: "left"
     })
     if(currentAmmo>0){
@@ -742,7 +747,7 @@ function informationChecker(){
                 },
                 input: "Magazine: " + currentAmmo + "/" + totalAmmo,
                 font: "48px VT323",
-                color: "black",
+                color: "#777",
                 alignment: "left"
             })
         }
@@ -755,7 +760,7 @@ function informationChecker(){
             },
             input: "Magazine: " + currentAmmo,
             font: "48px VT323",
-            color: "black",
+            color: "#777",
             alignment: "left"
         })
     }
@@ -766,7 +771,7 @@ function informationChecker(){
         },
         input: "Kills: " + killCounter,
         font: "48px VT323",
-        color: "black",
+        color: "#777",
         alignment: "left"
     })
     if(killCounter==100&&onceOnly==1){
@@ -879,7 +884,7 @@ function ghostDied(ghost) {
             },
             input: "Player Health: " + playerHealthCurrent + "/" + playerHealthMax,
             font: "48px VT323",
-            color: "black",
+            color: "#777",
             alignment: "left"
         })
     }
@@ -901,12 +906,12 @@ function tick() {
     }
     backgroundMusicPlay()
     window.requestAnimationFrame(tick);
+    mapBackground.draw()
     background.draw()
     boundaries.forEach(boundary => {
         boundary.draw()
     })
     player.draw()
-    foreground.draw()
     updateWeaponRotation()
     weapon.draw()
 
@@ -1052,47 +1057,23 @@ function tick() {
         if(ghost.isDead){
             ghostDied(ghost)
         }
-
-        if(Math.floor(ghost.position.x / 5) == Math.floor(player.position.x / 5) && player.position.y < ghost.position.y) {
-            //console.log('north')
-            ghost.movingDirection = 16;
-            ghost.goto(player.position.x, player.position.y, ghostSpeed)
-        }
-        else if(Math.floor(ghost.position.x / 5) == Math.floor(player.position.x / 5) && player.position.y > ghost.position.y) {
-            //console.log('south')
-            ghost.movingDirection = 0;
-            ghost.goto(player.position.x, player.position.y, ghostSpeed)
-        }
-        else if(player.position.x > ghost.position.x && Math.floor(ghost.position.y / 5) == Math.floor(player.position.y / 5)) {
-            //console.log('east')
-            ghost.movingDirection = 24;
-            ghost.goto(player.position.x, player.position.y, ghostSpeed)
-        }
-        else if(player.position.x < ghost.position.x && Math.floor(ghost.position.y / 5) == Math.floor(player.position.y / 5)) {
-            //console.log('west')
-            ghost.movingDirection = 8;
-            ghost.goto(player.position.x, player.position.y, ghostSpeed)
-        }
         else if (player.position.x < ghost.position.x && player.position.y > ghost.position.y) {
             //console.log('south west')
             ghost.movingDirection = 4;
-            ghost.goto(player.position.x, player.position.y, ghostSpeed)
         }
         else if(player.position.x > ghost.position.x && player.position.y < ghost.position.y) {
             //console.log('north east')
             ghost.movingDirection = 20;
-            ghost.goto(player.position.x, player.position.y, ghostSpeed)
         }
         else if(player.position.x > ghost.position.x && player.position.y > ghost.position.y) {
             //console.log('south east')
             ghost.movingDirection = 28;
-            ghost.goto(player.position.x, player.position.y, ghostSpeed)
         }
         else if(player.position.x < ghost.position.x && player.position.y < ghost.position.y) {
             //console.log('north west')
-            ghost.movingDirection = 12;
-            ghost.goto(player.position.x, player.position.y, ghostSpeed)
+            ghost.movingDirection = 12
         }
+        ghost.goto(player.position.x, player.position.y, ghostSpeed)
     })
 
     ghostList.forEach(ghost => {

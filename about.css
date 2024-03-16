@@ -38,6 +38,7 @@ body {
     border: 3px solid black;
     width: 300px;
     min-height: 300px;
+    margin-bottom: 0;
 }
 #pao {
     background-image: url(assets/pao.png);
@@ -53,25 +54,52 @@ body {
 }
 #aboutgame{
     border: 3px solid black;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: aqua;
+}
+#aboutgame p {
+    font-size: 30px;
+}
+.ji {
+    width: 100%;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-left: 200px;
+    padding-right: 200px;
     font-family: VT323;
 }
 #devs {
-    border: 3px solid black;
+    border-left: 3px solid black;
+    border-right: 3px solid black;
     margin-left: auto;
     margin-right: auto;
-    background-color: aqua;
     width: 1080px;
 }
 .text {
+    border: 1px solid black;
     font-family: VT323;
     margin: 30px;
     width: 300px;
+    font-size: 30px
 }
-
-
+.centerFont {
+    font-weight: 800;
+    text-shadow: 3px 3px rgb(255, 175, 255);
+    font-size: 60px;
+}
+#goBack {
+    top: 10px;
+    left: 10px;
+    position: fixed;
+    z-index: 10;
+    padding: 24px;
+    font-size: 20px;
+    border: 1px solid rgb(0, 0, 0);
+    background-color: burlywood;
+    font-weight: bold
+}
+#goBack:hover{
+    background-color: black;
+    color: white;
+}
 
 
 

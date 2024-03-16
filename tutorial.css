@@ -1,3 +1,25 @@
-html {
+html, body {
     background-color: pink;
+}
+#goBack {
+    top: 10px;
+    left: 10px;
+    position: fixed;
+    z-index: 10;
+    padding: 24px;
+    font-size: 20px;
+    border: 1px solid rgb(0, 0, 0);
+    background-color: burlywood;
+    font-weight: bold
+}
+#goBack:hover{
+    background-color: black;
+    color: white;
+}
+video{
+    width: 100%;
+    background-color: pink;
+    padding: calc(5% + 80px);
+    height: auto;
+    position: absolute;
 }
