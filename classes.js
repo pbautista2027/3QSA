@@ -60,11 +60,9 @@ class Enemy {
         this.diedViaPlayer = false
         this.isSpawning = true
         this.spawnPeriod = 0
-    }
-
+    }   
     draw() {
         c.globalAlpha = this.spawnPeriod / 150
-
 
         c.drawImage(
             this.image,
@@ -102,6 +100,8 @@ class Enemy {
             this.frames.val = this.movingDirection
             this.movedCheck = this.movingDirection
         }
+
+
     }
     goto(targetX, targetY, speed) {
         if(this.isSpawning){return}

@@ -129,13 +129,13 @@ const playerImage = new Image();
 playerImage.src = './assets/charachter.png';
 
 const weaponImage = new Image();
-weaponImage.src = './assets/gun.png'
+weaponImage.src = './assets/shuttle.png'
 
 const bulletImage = new Image();
 bulletImage.src = './assets/bullet.png'
 
-const zombieImage = new Image();
-zombieImage.src = './assets/zombie.png';
+const ghostImage = new Image();
+ghostImage.src = './assets/ghost.png';
 
 const player = new Sprite ({
     position: {
@@ -475,7 +475,7 @@ function createNewGhost() {
             x: x,
             y: y
         },
-        image: zombieImage,
+        image: ghostImage,
         frames: {
             max: 32
         },
@@ -895,83 +895,12 @@ function ghostDied(ghost) {
     })
 }
 
-function tick() {
-    if(gameState == paused){return}
-    if(document.getElementById('canvas').style.display == 'none') {
-        document.getElementById('canvas').style.display = 'block'
-        window.setTimeout(() => {
-            document.getElementById('canvas').style.opacity = 1
-            document.getElementById('canvas').style.transform = 'scale(1)'
-        }, 0);
-    }
-    backgroundMusicPlay()
-    window.requestAnimationFrame(tick);
-    mapBackground.draw()
-    background.draw()
-    boundaries.forEach(boundary => {
-        boundary.draw()
-    })
-    player.draw()
-    updateWeaponRotation()
-    weapon.draw()
+var movingW = true
+var movingA = true
+var movingS = true
+var movingD = true
 
-    ghostList.forEach(ghost => {
-        ghost.draw()
-    });
-    bulletList.forEach(bullet => {
-        bullet.draw()
-    })
-
-    playerHealth.draw()
-    magCapacity.draw()
-    waveNumber.draw()
-    displayKill.draw()
-    reach100.draw()
-    displayRandomUpgrade.draw()
-    
-    var movingW = true
-    var movingA = true
-    var movingS = true
-    var movingD = true
-    player.moving = false
-    player.movingDirection = 0
-    ghostList.forEach(element => {
-        element.movingDirection = 0
-    });
-    //south: 0, southEast: 28, east: 24, northEast: 20, north: 16, northWest: 12, west: 8, southWest: 4
-
-    if(keys.w.pressed && keys.a.pressed && blockInput != true) {
-        playerSpeed = Math.sqrt(2*speed*speed) / 2;
-        player.movingDirection = 12;
-    }
-    else if(keys.w.pressed && keys.d.pressed && blockInput != true) {
-        playerSpeed = Math.sqrt(2*speed*speed) / 2;
-        player.movingDirection = 20;
-    }
-    else if(keys.s.pressed && keys.a.pressed && blockInput != true) {
-        playerSpeed = Math.sqrt(2*speed*speed) / 2;
-        player.movingDirection = 4;
-    }
-    else if(keys.s.pressed && keys.d.pressed && blockInput != true) {
-        playerSpeed = Math.sqrt(2*speed*speed) / 2;
-        player.movingDirection = 28;
-    }
-    else if(blockInput != true) {
-        playerSpeed = speed;
-    }
-
-    if(keys.w.pressed && !keys.a.pressed && !keys.s.pressed && !keys.d.pressed && blockInput != true){player.movingDirection = 16}
-    
-    if(keys.a.pressed && !keys.w.pressed && !keys.s.pressed && !keys.d.pressed && blockInput != true){player.movingDirection = 8}
-
-    if(keys.s.pressed && !keys.a.pressed && !keys.w.pressed && !keys.d.pressed && blockInput != true){player.movingDirection = 0}
-
-    if(keys.d.pressed && !keys.a.pressed && !keys.s.pressed && !keys.w.pressed && blockInput != true){player.movingDirection = 24}
-
-    if(keys.q.pressed) {
-        pauseHUD('popupGamePause')
-    }
-
+function moveMovables() {
     if (keys.w.pressed && blockInput != true) {
         player.moving = true
         for(var i = 0; i < boundaries.length; i++) {
@@ -1042,6 +971,86 @@ function tick() {
         }
         if(movingD)movables.forEach((movable) => {movable.position.x -= playerSpeed})
     }
+}
+
+function tick() {
+    if(gameState == paused){return}
+    if(document.getElementById('canvas').style.display == 'none') {
+        document.getElementById('canvas').style.display = 'block'
+        window.setTimeout(() => {
+            document.getElementById('canvas').style.opacity = 1
+            document.getElementById('canvas').style.transform = 'scale(1)'
+        }, 0);
+    }
+    backgroundMusicPlay()
+    window.requestAnimationFrame(tick);
+    mapBackground.draw()
+    background.draw()
+    boundaries.forEach(boundary => {
+        boundary.draw()
+    })
+    player.draw()
+    updateWeaponRotation()
+    weapon.draw()
+
+    ghostList.forEach(ghost => {
+        ghost.draw()
+    });
+    bulletList.forEach(bullet => {
+        bullet.draw()
+    })
+
+    playerHealth.draw()
+    magCapacity.draw()
+    waveNumber.draw()
+    displayKill.draw()
+    reach100.draw()
+    displayRandomUpgrade.draw()
+    
+    movingW = true
+    movingA = true
+    movingS = true
+    movingD = true
+    player.moving = false
+    player.movingDirection = 0
+    ghostList.forEach(element => {
+        element.movingDirection = 0
+    });
+    //south: 0, southEast: 28, east: 24, northEast: 20, north: 16, northWest: 12, west: 8, southWest: 4
+
+    if(keys.w.pressed && keys.a.pressed && blockInput != true) {
+        playerSpeed = Math.sqrt(2*speed*speed) / 2;
+        player.movingDirection = 12;
+    }
+    else if(keys.w.pressed && keys.d.pressed && blockInput != true) {
+        playerSpeed = Math.sqrt(2*speed*speed) / 2;
+        player.movingDirection = 20;
+    }
+    else if(keys.s.pressed && keys.a.pressed && blockInput != true) {
+        playerSpeed = Math.sqrt(2*speed*speed) / 2;
+        player.movingDirection = 4;
+    }
+    else if(keys.s.pressed && keys.d.pressed && blockInput != true) {
+        playerSpeed = Math.sqrt(2*speed*speed) / 2;
+        player.movingDirection = 28;
+    }
+    else if(blockInput != true) {
+        playerSpeed = speed;
+    }
+
+    if(keys.w.pressed && !keys.a.pressed && !keys.s.pressed && !keys.d.pressed && blockInput != true){player.movingDirection = 16}
+    
+    if(keys.a.pressed && !keys.w.pressed && !keys.s.pressed && !keys.d.pressed && blockInput != true){player.movingDirection = 8}
+
+    if(keys.s.pressed && !keys.a.pressed && !keys.w.pressed && !keys.d.pressed && blockInput != true){player.movingDirection = 0}
+
+    if(keys.d.pressed && !keys.a.pressed && !keys.s.pressed && !keys.w.pressed && blockInput != true){player.movingDirection = 24}
+
+    if(keys.q.pressed) {
+        pauseHUD('popupGamePause')
+    }
+
+    moveMovables()
 
     particles.forEach((particle, index) => {
         particle.update();
