@@ -256,7 +256,7 @@ var dontSpamRC=0;
 var totalAmmo=10;
 var currentAmmo=totalAmmo;
 var sig=0;
-var bulletInterval=1500;
+var bulletInterval=1400;
 var reloadSpeed=3500;
 var bgAnimation;
 var invincibility;
@@ -343,7 +343,7 @@ var displayRandomUpgrade = new Text ({
 })
 
 function displayWeaponIsUpgraded(){
-    if(randOneToTen<=4){
+    if(randOneToTen<=6){
         displayRandomUpgrade = new Text ({
             position: {
                 x: (canvas.width)/2.2  ,
@@ -354,9 +354,9 @@ function displayWeaponIsUpgraded(){
             color: "green",
             alignment: "left"
         })
-        bulletInterval-=85;
+        bulletInterval-=100;
     }
-    if(randOneToTen<=4&&randOneToTen<=8){
+    if(randOneToTen>6&&randOneToTen<=8){
         displayRandomUpgrade = new Text ({
             position: {
                 x: (canvas.width)/2.2  ,
@@ -369,7 +369,7 @@ function displayWeaponIsUpgraded(){
         })
         reloadSpeed-=250;
     }
-    if(randOneToTen==9){
+    if(randOneToTen>8&&randOneToTen<=9){
         displayRandomUpgrade = new Text ({
             position: {
                 x: (canvas.width)/2.2  ,
@@ -382,7 +382,7 @@ function displayWeaponIsUpgraded(){
     })
     totalAmmo++;
     }
-    if(randOneToTen==10){
+    if(randOneToTen>9&&randOneToTen<=9.9){
         displayRandomUpgrade = new Text ({
             position: {
                 x: (canvas.width)/2.2  ,
@@ -391,6 +391,19 @@ function displayWeaponIsUpgraded(){
             input: "PLAYER SPEED BOOSTED",
             font: "57px VT323",
             color: "green",
+            alignment: "left"
+    })
+    playerSpeed=playerSpeed*1.15;
+    }
+    if(randOneToTen>9.9){
+        displayRandomUpgrade = new Text ({
+            position: {
+                x: (canvas.width)/2.2  ,
+                y: (canvas.height)/10
+            },
+            input: "+1 LIFE",
+            font: "57px VT323",
+            color: "red",
             alignment: "left"
     })
     playerSpeed=playerSpeed*1.08;
@@ -610,14 +623,13 @@ function resetValues(){
     totalAmmo=10;
     currentAmmo=totalAmmo;
     sig=0;
-    bulletInterval=1500;
+    bulletInterval=1400;
     reloadSpeed=3500;
     playerSpeed=speed;
 }
 function gameGame(){
     if(counterStart==1){
         autoWave=setInterval(waveStart, 30000);
-        autoSpawnGhost=setInterval(createNewGhost, spawnGhostTime);
     }
 }
 function waveNumberDisplay(){
@@ -665,9 +677,9 @@ function stopWaveNumberDisplay(){
                     x: (canvas.width)/2.2  ,
                     y: (canvas.height)/10
                 },
-                input: "100 KILLS ACQUIRED, WEAPON UPGRADED",
+                input: "100 KILLS ACQUIRED, WEAPON AND MOVEMENT UPGRADED",
                 font: "57px VT323",
-                color: "#777",
+                color: "aquamarine",
                 alignment: "left"
             })
         }
@@ -689,25 +701,35 @@ function waveStart(){
     if(waveGhost<9){
         waveGhost++;
         spawnGhostTime-=250;
+        clearInterval(autoSpawnGhost);
+        autoSpawnGhost=setInterval(createNewGhost, spawnGhostTime);
         ghostSpeed = (speed) / 2.5 + (waveGhost)/4;
         waveNumberDisplay();
         stopWaveNum=setTimeout(stopWaveNumberDisplay,3000);
         if(waveGhost!=1){
-            randOneToTen=Math.ceil(Math.random()*10);
+            randOneToTen=Math.random()*10;
             displayWeaponIsUpgraded();
             setTimeout(stopDisplayWeaponIsUpgraded, 3000)
         }
     }
     if(waveGhost==9){
         waveGhost++;
-        spawnGhostTime=spawnGhostTime/2; 
+        spawnGhostTime=spawnGhostTime/1.6; 
+        clearInterval(autoSpawnGhost)
+        autoSpawnGhost=setInterval(createNewGhost, spawnGhostTime);
         ghostSpeed=ghostSpeed*1.1;
         waveNumberDisplay(); 
-        stopWaveNum=setTimeout(stopWaveNumberDisplay,3000);      
+        stopWaveNum=setTimeout(stopWaveNumberDisplay,3000);  
+        randOneToTen=Math.random()*10;
+        displayWeaponIsUpgraded();
+        setTimeout(stopDisplayWeaponIsUpgraded, 3000)    
     }
     if(waveGhost==10){
         waveGhost++;
         stopFinalWave=setTimeout(stopAutoSpawnGhost,30000)
+        randOneToTen=Math.random()*10;
+        displayWeaponIsUpgraded();
+        setTimeout(stopDisplayWeaponIsUpgraded, 3000)
     }
 }
 function stopAutoSpawnGhost(){
@@ -856,9 +878,10 @@ function backToStart(){
     startingHUD('popupGameStart', 'multiple');
 }
 function weaponUpgrades(){
-    bulletInterval=bulletInterval/1.35;
-    bulletSpeed=bulletSpeed*1.25;
-    reloadSpeed-=1000;
+    bulletInterval=bulletInterval/1.4;
+    bulletSpeed=bulletSpeed*1.3;
+    reloadSpeed/=2.2;
+    playerSpeed+=1;
     weaponUpgradeDisplay();
     setTimeout(stopWeaponUpgradeDisplay,3000)
 }

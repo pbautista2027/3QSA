@@ -1,6 +1,6 @@
 /* vietnamese */
 @font-face {
-    font-family: 'VT323';
+    font-family: 'VT323';  
     font-style: normal;
     font-weight: 400;
     font-display: swap;
@@ -27,13 +27,16 @@
 }
 
 html {
-    background-color: pink;
+    background-color:  #001041;
 }
 body {
     font-family: VT323;
 }
 #pleaseClick {
-    background-color: pink;
+    background-image: url('./assets/game-background.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
     font-family: VT323;
     font-size: 313px;
     color: black;
@@ -85,7 +88,7 @@ canvas:hover {
     backdrop-filter: none;
 }
 .coolBorder{
-    background-color: #aaaed4;
+    background-color: #bc76d3;
     width: calc(100% - 20px);
     min-height: 300px;
     border: 10px solid black;
@@ -95,7 +98,8 @@ canvas:hover {
     margin: auto;
 }
 .buttonStart {
-    background-color: white;
+    color: rgb(255, 175, 255);
+    background-color: #001041;
     border: 2px solid black;
     width: 70%;
     font-size: 70px;
@@ -105,7 +109,7 @@ canvas:hover {
     margin-bottom: 5px;
     font-family: VT323;
     transition-duration: 150ms;
-    text-shadow: 3px 3px rgb(255, 175, 255);
+    text-shadow: 3px 3px rgb(143, 47, 154);
 }
 .buttonStart:hover {
     background-color: #2cb6ac;
