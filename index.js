@@ -603,7 +603,6 @@ function resetGame(popupId){
 }
 function resetValues(){
     stopWaveNumberDisplay();
-    stopAutoSpawnGhost();
     stopWeaponUpgradeDisplay();
     clearTimeout(stopFinalWave);
     clearTimeout(stopWaveNum);
@@ -611,6 +610,7 @@ function resetValues(){
     clearTimeout(stopWaveStackToo);
     clearInterval(autoWave);
     clearInterval(autoSpawnGhost);
+    winCounter=0;
     bulletSpeed = speed + 20;
     onceOnly=1;
     killCounter=0;
@@ -624,7 +624,7 @@ function resetValues(){
     currentAmmo=totalAmmo;
     sig=0;
     bulletInterval=1400;
-    reloadSpeed=3500
+    reloadSpeed=3500;
     playerSpeed=speed;
 }
 function gameGame(){
@@ -674,8 +674,8 @@ function stopWaveNumberDisplay(){
         if(killCounter==100){
             reach100 = new Text ({
                 position: {
-                    x: (canvas.width)/2.2  ,
-                    y: (canvas.height)/10
+                    x: (canvas.width)/100  ,
+                    y: (canvas.height)/5
                 },
                 input: "100 KILLS ACQUIRED, WEAPON AND MOVEMENT UPGRADED",
                 font: "57px VT323",
@@ -702,8 +702,9 @@ function waveStart(){
         waveGhost++;
         spawnGhostTime-=250;
         clearInterval(autoSpawnGhost);
+        createNewGhost();
         autoSpawnGhost=setInterval(createNewGhost, spawnGhostTime);
-        ghostSpeed = (speed) / 2.5 + (waveGhost)/4;
+        ghostSpeed = (speed) / 2.55 + (waveGhost)/5;
         waveNumberDisplay();
         stopWaveNum=setTimeout(stopWaveNumberDisplay,3000);
         if(waveGhost!=1){
@@ -715,9 +716,10 @@ function waveStart(){
     if(waveGhost==9){
         waveGhost++;
         spawnGhostTime=spawnGhostTime/1.6; 
-        clearInterval(autoSpawnGhost)
+        clearInterval(autoSpawnGhost);
+        createNewGhost();
         autoSpawnGhost=setInterval(createNewGhost, spawnGhostTime);
-        ghostSpeed=ghostSpeed*1.1;
+        ghostSpeed=ghostSpeed*1.09;
         waveNumberDisplay(); 
         stopWaveNum=setTimeout(stopWaveNumberDisplay,3000);  
         randOneToTen=Math.random()*10;
@@ -726,7 +728,7 @@ function waveStart(){
     }
     if(waveGhost==10){
         waveGhost++;
-        stopFinalWave=setTimeout(stopAutoSpawnGhost,30000)
+        stopFinalWave=setTimeout(stopAutoSpawnGhost,60000)
         randOneToTen=Math.random()*10;
         displayWeaponIsUpgraded();
         setTimeout(stopDisplayWeaponIsUpgraded, 3000)
@@ -734,7 +736,9 @@ function waveStart(){
 }
 function stopAutoSpawnGhost(){
     clearInterval(autoSpawnGhost);
+    winCounter=1;
 }
+var winCounter=0;
 setInterval(checker, 10);
 function checker(){
     if (waveGhost==10||playerHealthCurrent==0){
@@ -742,9 +746,9 @@ function checker(){
         clearInterval(autoWave);
         closingHUD('popupGameOver');
     }
-    if(waveGhost>10&&ghostList.length===0&&onlyOnceVictor==0){
+    if(waveGhost>10&&ghostList.length===0&&onlyOnceVictor==0&&winCounter==1){
         counterStart=0;
-        closingHUD('popupGameOver');
+        closingHUD('popupGameWon');
         onlyOnceVictor++;
     }
     informationChecker();
@@ -869,6 +873,7 @@ function mainMenu(){
     blockInput = true
     counterStart=0;
     resetValues();
+    closePopup('popupGameWon')
     closePopup('popupGameOver');
     closePopup('popupGamePause');
     unPause();
@@ -878,10 +883,10 @@ function backToStart(){
     startingHUD('popupGameStart', 'multiple');
 }
 function weaponUpgrades(){
-    bulletInterval=bulletInterval/1.4;
+    bulletInterval=bulletInterval/1.5;
     bulletSpeed=bulletSpeed*1.3;
     reloadSpeed/=2.2;
-    playerSpeed+=1;
+    playerSpeed+=1.3;
     weaponUpgradeDisplay();
     setTimeout(stopWeaponUpgradeDisplay,3000)
 }

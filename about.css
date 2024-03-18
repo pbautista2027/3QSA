@@ -28,6 +28,7 @@
 
 body {
     font-family: VT323;
+    background-color: #01113f;
 }
 .flex{
     display: flex;
@@ -53,10 +54,12 @@ body {
     background-size: cover;
 }
 #aboutgame{
-    border: 3px solid black;
+    border: 3px solid rgb(255, 175, 255);
+    background-color: #01113f;
 }
 #aboutgame p {
     font-size: 30px;
+    color:#bc76d3;
 }
 .ji {
     width: 100%;
@@ -65,6 +68,7 @@ body {
     padding-left: 200px;
     padding-right: 200px;
     font-family: VT323;
+    background-color: #01113f;
 }
 #devs {
     border-left: 3px solid black;
@@ -82,8 +86,12 @@ body {
 }
 .centerFont {
     font-weight: 800;
-    text-shadow: 3px 3px rgb(255, 175, 255);
     font-size: 60px;
+}
+
+h1.centerFont{
+    color:#f2ccff;
+    text-shadow: 3.5px 3.5px rgb(143, 47, 154);
 }
 #goBack {
     top: 10px;
@@ -92,14 +100,19 @@ body {
     z-index: 10;
     padding: 24px;
     font-size: 20px;
-    border: 1px solid rgb(0, 0, 0);
-    background-color: burlywood;
+    background-color: black;
+    border-radius: 30px;
+    color: rgb(58, 76, 218);
+    border: 1px solid rgb(31, 45, 151);
+    font-weight: bold;
     font-weight: bold
 }
 #goBack:hover{
-    background-color: black;
-    color: white;
+    border: 1px solid #bc76d3;
+    background-color: #001041;
+    color: rgb(255, 175, 255);
 }
+
 
 
 

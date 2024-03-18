@@ -27,19 +27,21 @@
 }
 
 html {
-    background-color:  #001041;
+    background-image: url('./assets/game-background.png');
 }
 body {
     font-family: VT323;
 }
 #pleaseClick {
-    background-image: url('./assets/game-background.png');
+    background-color:  #001041;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
     font-family: VT323;
     font-size: 313px;
-    color: black;
+    color: rgb(255, 175, 255);
+    text-shadow: 3px 3px rgb(143, 47, 154);
+
     padding: 0;
     margin: 0;
 }
@@ -67,7 +69,7 @@ canvas:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.323);
     z-index: 1;
     opacity: 0;
     transition: opacity 0.2s ease;
@@ -77,9 +79,9 @@ canvas:hover {
     position: fixed;
     background-color: #001041;
     border-radius: 5px;
-    padding: 20px;
+    padding: 6px;
     width: 56vw;
-    top: 50%;
+    top: 60%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 2;
@@ -103,7 +105,7 @@ canvas:hover {
     border: 2px solid black;
     width: 70%;
     font-size: 70px;
-    min-height: 30px;
+    min-height: 20px;
     margin: auto;
     margin-top: 5px;
     margin-bottom: 5px;

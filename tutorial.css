@@ -8,18 +8,19 @@ html, body {
     z-index: 10;
     padding: 24px;
     font-size: 20px;
-    border: 1px solid rgb(0, 0, 0);
-    background-color: burlywood;
-    font-weight: bold
+    border-radius: 30px;
+    background-color: black;
+    color: rgb(58, 76, 218);
+    border: 1px solid rgb(31, 45, 151);
+    font-weight: bold;
 }
 #goBack:hover{
-    background-color: black;
-    color: white;
+    border: 1px solid #bc76d3;
+    background-color: #001041;
+    color: rgb(255, 175, 255);
 }
-video{
+iframe{
     width: 100%;
     background-color: pink;
-    padding: calc(5% + 80px);
-    height: auto;
-    position: absolute;
+    padding-top: 90px;
 }
