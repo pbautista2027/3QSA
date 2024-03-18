@@ -624,7 +624,7 @@ function resetValues(){
     currentAmmo=totalAmmo;
     sig=0;
     bulletInterval=1400;
-    reloadSpeed=3500;
+    reloadSpeed=3500
     playerSpeed=speed;
 }
 function gameGame(){
